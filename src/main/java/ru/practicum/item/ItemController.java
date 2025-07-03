@@ -1,5 +1,6 @@
 package ru.practicum.item;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,26 +8,27 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
-import static ru.practicum.item.ItemMapper.toDto;
-import static ru.practicum.item.ItemMapper.toEntity;
-
 import java.util.List;
 import java.util.Optional;
+
+import static ru.practicum.item.ItemMapper.toDto;
+import static ru.practicum.item.ItemMapper.toEntity;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 class ItemController {
+    private static final String userCustomHeader = "X-Sharer-User-Id";
     private final ItemService itemService;
     private final UserService userService;
 
     @GetMapping
-    public List<ItemDto> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getItemsOfUser(@RequestHeader(userCustomHeader) long userId) {
         return itemService.getItems(userId).stream().map(ItemMapper::toDto).toList();
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam("text") String text) {
+    public List<ItemDto> search(@RequestHeader(userCustomHeader) long userId, @RequestParam("text") String text) {
         if (text == null || text.isEmpty()) {
             return List.of();
         }
@@ -34,7 +36,7 @@ class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemDto> getItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<ItemDto> getItem(@RequestHeader(userCustomHeader) Long userId,
                                            @PathVariable("id") Long itemId) {
         Optional<Item> item = itemService.getItem(userId, itemId);
         return item.map(value -> new ResponseEntity<>(toDto(value), HttpStatus.OK))
@@ -42,20 +44,8 @@ class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> add(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                      @RequestBody ItemDto itemDto) {
-
-        if (itemDto.getAvailable() == null) {
-            return new ResponseEntity<>(itemDto, HttpStatus.BAD_REQUEST);
-        }
-
-        if (itemDto.getName() == null || itemDto.getName().isEmpty()) {
-            return new ResponseEntity<>(itemDto, HttpStatus.BAD_REQUEST);
-        }
-
-        if (itemDto.getDescription() == null || itemDto.getDescription().isEmpty()) {
-            return new ResponseEntity<>(itemDto, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ItemDto> add(@RequestHeader(userCustomHeader) Long userId,
+                                      @Valid @RequestBody ItemDto itemDto) {
 
         Optional<User> user = userService.getUser(userId);
         if (user.isEmpty()) {
@@ -67,7 +57,7 @@ class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<ItemDto> update(@RequestHeader(userCustomHeader) Long userId,
                                           @PathVariable("id") Long itemId,
                                           @RequestBody ItemDto itemDto) {
         Optional<User> user = userService.getUser(userId);
@@ -105,7 +95,7 @@ class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public void deleteItem(@RequestHeader(userCustomHeader) long userId,
                            @PathVariable(name = "itemId") long itemId) {
         itemService.deleteItem(userId, itemId);
     }

@@ -1,25 +1,20 @@
 package ru.practicum.item;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
-    private Long id;
-    private Long userId;
-    private String url;
-    private Boolean available;
-    private String description;
-    private String name;
-
-    public Item(Long id, Long userId, String url, Boolean available, String description, String name) {
-        this.id = id;
-        this.userId = userId;
-        this.url = url;
-        this.available = available;
-        this.description = description;
-        this.name = name;
-    }
-
-    public Item() {
-    }
+    Long id;
+    Long userId;
+    String url;
+    Boolean available;
+    String description;
+    String name;
 }

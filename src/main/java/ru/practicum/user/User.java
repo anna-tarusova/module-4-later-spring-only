@@ -1,20 +1,15 @@
 package ru.practicum.user;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 @Data
-@Setter
-@Getter
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
-    private Long id;
-    private String email;
-    private String name;
-
-    public User(Long id, String email, String name) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-    }
+    Long id;
+    String email;
+    String name;
 }

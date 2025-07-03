@@ -1,18 +1,18 @@
 package ru.practicum.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.exceptions.ConflictException;
 
-import static ru.practicum.user.UserMapper.toDto;
-import static ru.practicum.user.UserMapper.toEntity;
-
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static ru.practicum.user.UserMapper.toDto;
+import static ru.practicum.user.UserMapper.toEntity;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,11 +55,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createNewUser(@RequestBody UserDto user) {
-        if (user.getEmail() == null || user.getEmail().isEmpty() || !user.getEmail().matches(emailRegex)) {
-            return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<UserDto> createNewUser(@Valid @RequestBody UserDto user) {
         try {
             return new ResponseEntity<>(toDto(userService.createUser(toEntity(user))), HttpStatus.CREATED);
         } catch (ConflictException e) {
