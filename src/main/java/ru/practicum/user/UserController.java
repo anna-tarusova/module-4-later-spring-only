@@ -45,7 +45,9 @@ public class UserController {
                 }
                 currentUser.setEmail(user.getEmail());
             }
-            currentUser.setName(user.getName());
+            if (user.getName() != null && !user.getName().isBlank()) {
+                currentUser.setName(user.getName());
+            }
             return new ResponseEntity<>(toDto(userService.saveUser(currentUser)), HttpStatus.OK);
         } catch (ConflictException e) {
             return new ResponseEntity<>(user, HttpStatus.CONFLICT);

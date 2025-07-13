@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
@@ -95,8 +96,14 @@ class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader(userCustomHeader) long userId,
+    public ResponseEntity<Item> deleteItem(@RequestHeader(userCustomHeader) long userId,
                            @PathVariable(name = "itemId") long itemId) {
-        itemService.deleteItem(userId, itemId);
+
+        try {
+            itemService.deleteItem(userId, itemId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

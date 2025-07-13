@@ -1,12 +1,9 @@
 package ru.practicum.user;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.Optional;
 
-interface UserRepository {
-    List<User> findAll();
-    User save(User user);
-    Optional<User> getUser(long id);
-    User createUser(User user);
-    void deleteUser(long id);
+interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findUserByEmail(String email);
 }
