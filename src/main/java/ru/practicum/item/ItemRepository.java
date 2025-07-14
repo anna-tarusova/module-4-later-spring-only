@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-interface ItemRepository extends JpaRepository<Item, Long>  {
+public interface ItemRepository extends JpaRepository<Item, Long>  {
     List<Item> findByUserId(long userId);
     @Query("SELECT i FROM Item i WHERE i.userId = ?1 " +
             "AND LOWER(i.name) LIKE LOWER(CONCAT('%', ?2, '%')) " +
