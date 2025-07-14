@@ -2,9 +2,12 @@ package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.booking.Booking;
+import ru.practicum.booking.BookingRepository;
 import ru.practicum.exceptions.ForbiddenException;
 import ru.practicum.exceptions.NotFoundException;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,10 +15,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public List<Item> getItems(long userId) {
-        return repository.findByUserId(userId);
+        List<Item> items = repository.findByUserId(userId);
+        items.forEach(item -> {
+            Optional<Booking> lastBooking = bookingRepository.findByItemIdBefore(item.getId(), Instant.now());
+            Optional<Booking> nextBooking = bookingRepository.findByItemIdAfter(item.getId(), Instant.now());
+            lastBooking.ifPresent(item::setLastBooking);
+            nextBooking.ifPresent(item::setNextBooking);
+        });
+        return items;
     }
 
     @Override
@@ -25,13 +36,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Optional<Item> getItem(long userId, long itemId) {
-        Optional<Item> item = repository.findById(itemId);
-
-        if (item.isPresent() && !item.get().getUserId().equals(userId)) {
-            throw new ForbiddenException("Предмет не принадлежит пользователю");
-        }
-
-        return item;
+        return repository.findById(itemId);
     }
 
     @Override

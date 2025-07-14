@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exceptions.ForbiddenException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
@@ -22,6 +23,7 @@ class ItemController {
     private static final String userCustomHeader = "X-Sharer-User-Id";
     private final ItemService itemService;
     private final UserService userService;
+    private final CommentService commentService;
 
     @GetMapping
     public List<ItemDto> getItemsOfUser(@RequestHeader(userCustomHeader) long userId) {
@@ -96,7 +98,7 @@ class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Item> deleteItem(@RequestHeader(userCustomHeader) long userId,
+    public ResponseEntity<ItemDto> deleteItem(@RequestHeader(userCustomHeader) long userId,
                            @PathVariable(name = "itemId") long itemId) {
 
         try {
@@ -104,6 +106,24 @@ class ItemController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDto> comment(@RequestHeader(userCustomHeader) long userId,
+                                        @PathVariable(name = "itemId") long itemId,
+                                        @Valid @RequestBody CommentDto commentDto) {
+
+        try {
+            Comment comment = CommentMapper.toEntity(commentDto);
+            comment.setItemId(itemId);
+            User author = new User();
+            author.setId(userId);
+            comment.setAuthor(author);
+            comment = commentService.addComment(comment);
+            return new ResponseEntity<>(CommentMapper.toDto(comment), HttpStatus.OK);
+        } catch (ForbiddenException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

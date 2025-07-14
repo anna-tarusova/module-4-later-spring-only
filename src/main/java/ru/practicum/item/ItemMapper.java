@@ -2,13 +2,26 @@ package ru.practicum.item;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.booking.BookingMapper;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
     public static ItemDto toDto(Item item) {
         if (item == null) return null;
-        return new ItemDto(item.getId(), item.getUserId(), item.getUrl(), item.getAvailable(), item.getDescription(), item.getName());
+        ItemDto itemDto =  new ItemDto(item.getId(), item.getUserId(), item.getUrl(), item.getAvailable(), item.getDescription(), item.getName());
+        itemDto.setLastBooking(BookingMapper.toDto(item.getLastBooking()));
+        itemDto.setNextBooking(BookingMapper.toDto(item.getNextBooking()));
+
+        List<CommentDto> commentDtos = null;
+        if (item.getComments() != null) {
+            commentDtos = item.getComments().stream().map(CommentMapper::toDto).toList();
+        }
+
+        itemDto.setComments(commentDtos);
+        return itemDto;
     }
 
     public static Item toEntity(ItemDto itemDto) {

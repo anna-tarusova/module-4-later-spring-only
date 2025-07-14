@@ -6,6 +6,9 @@ import ru.practicum.user.UserMapper;
 
 public class BookingMapper {
     public static BookingDto toDto(Booking booking) {
+        if (booking == null) {
+            return null;
+        }
         return new BookingDto(booking.getId(), booking.getItem().getId(),
                 ItemMapper.toDto(booking.getItem()),
                 UserMapper.toDto(booking.getBooker()),

@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.booking.BookingDto;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,4 +25,18 @@ public class ItemDto {
     String description;
     @NotBlank(message = "Название продукта не может быть пустым")
     String name;
+
+    List<CommentDto> comments;
+
+    BookingDto lastBooking;
+    BookingDto nextBooking;
+
+    public ItemDto(Long id, Long userId, String url, Boolean available, String description, String name) {
+        setId(id);
+        setUserId(userId);
+        setUrl(url);
+        setAvailable(available);
+        setDescription(description);
+        setName(name);
+    }
 }
