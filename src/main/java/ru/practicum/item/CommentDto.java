@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,9 +24,12 @@ public class CommentDto {
     Long itemId;
     Long bookerId;
     String authorName;
+
     @NotNull(message = "Поле comment не может быть пустым")
     @JsonProperty("text")
+    @Size(min = 10, max = 4000)
     String comment;
+
     @JsonDeserialize(using = InstantDeserializer.class)
     @JsonSerialize(using = InstantSerializer.class)
     Instant created;
