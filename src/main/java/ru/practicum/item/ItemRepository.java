@@ -1,19 +1,14 @@
 package ru.practicum.item;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
-import java.util.Optional;
 
-interface ItemRepository {
-
+public interface ItemRepository extends JpaRepository<Item, Long>  {
     List<Item> findByUserId(long userId);
-
-    List<Item> findByUserId(long userId, String text);
-
-    Optional<Item> get(long userId, long itemId);
-
-    Item add(Item item);
-
-    Item update(Item item);
-
-    void deleteByUserIdAndItemId(long userId, long itemId);
+    @Query("SELECT i FROM Item i WHERE i.userId = ?1 " +
+            "AND LOWER(i.name) LIKE LOWER(CONCAT('%', ?2, '%')) " +
+            "AND i.available = true")
+    List<Item> search(long userId, String text);
 }
