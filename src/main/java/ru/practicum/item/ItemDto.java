@@ -1,5 +1,6 @@
 package ru.practicum.item;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,6 +39,9 @@ public class ItemDto {
 
     BookingDto lastBooking;
     BookingDto nextBooking;
+
+    @Nullable
+    Long requestId;
 
     public ItemDto(Long id, Long userId, String url, Boolean available, String description, String name) {
         setId(id);
