@@ -32,39 +32,28 @@ public class BookingController {
     public ResponseEntity<BookingDto> create(@RequestHeader(USER_CUSTOM_HEADER) long bookerId,
                                              @Valid @RequestBody BookingDto bookingDto) {
         log.info("create, bookerId = {}, bookingDto = {}", bookerId, bookingDto.toString());
-        if (bookingDto.getStart().equals(bookingDto.getEnd())) {
-            log.error("create, start = end = {}", bookingDto.getStart());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        if (bookingDto.getStart().isBefore(Instant.now())) {
-            log.error("create, start in the past");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        if (bookingDto.getEnd().isBefore(Instant.now())) {
-            log.error("create, end in the past");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         Booking booking = toEntity(bookingDto);
         User booker = new User();
         booker.setId(bookerId);
         booking.setBooker(booker);
 
-        try {
-            booking = bookingService.addNewBooking(booking);
-            return new ResponseEntity<>(toDto(booking), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            log.error("create, not found, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (BadRequestException e) {
-            log.error("create, bad request exception, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (ForbiddenException e) {
-            log.error("create, forbidden exception, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        booking = bookingService.addNewBooking(booking);
+        return new ResponseEntity<>(toDto(booking), HttpStatus.OK);
+
+//        try {
+//            booking = bookingService.addNewBooking(booking);
+//            return new ResponseEntity<>(toDto(booking), HttpStatus.OK);
+//        } catch (NotFoundException e) {
+//            log.error("create, not found, error = {}", e.getMessage());
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        } catch (BadRequestException e) {
+//            log.error("create, bad request exception, error = {}", e.getMessage());
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        } catch (ForbiddenException e) {
+//            log.error("create, forbidden exception, error = {}", e.getMessage());
+//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//        }
     }
 
     @PatchMapping("/{bookingId}")
@@ -75,9 +64,6 @@ public class BookingController {
             log.info("approve, ownerId = {}, bookingId = {}, approved = {}", ownerId, bookingId, approved);
             Booking booking = bookingService.approve(ownerId, bookingId, approved);
             return new ResponseEntity<>(toDto(booking), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            log.error("approve, not found exception, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (ForbiddenException e) {
             log.error("approve, forbidden exception, error = {}", e.getMessage());
             //так того требует 1 тест, возвращать Booking

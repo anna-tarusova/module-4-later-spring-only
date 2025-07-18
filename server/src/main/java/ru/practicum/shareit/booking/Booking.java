@@ -26,7 +26,7 @@ public class Booking {
     User booker;
 
     Instant start;
-    @Column(name = "endDate")
+    @Column(name = "end_date")
     Instant end;
     @Enumerated(EnumType.STRING)
     State state;

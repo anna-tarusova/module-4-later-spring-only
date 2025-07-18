@@ -39,9 +39,9 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> saveNewUser(@PathVariable("id") long id, @RequestBody UserDto user) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") long id, @RequestBody UserDto user) {
         try {
-            log.info("getUser, id = {}, user = {}", id, user.toString());
+            log.info("updateUser, id = {}, user = {}", id, user.toString());
             Optional<User> currentUserOpt = userService.getUser(id);
             User currentUser = currentUserOpt.orElseThrow();
             if (user.getEmail() != null) {

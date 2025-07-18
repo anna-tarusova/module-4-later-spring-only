@@ -115,14 +115,9 @@ class ItemController {
     public ResponseEntity<ItemDto> deleteItem(@RequestHeader(USER_CUSTOM_HEADER) long userId,
                            @PathVariable(name = "itemId") long itemId) {
 
-        try {
-            log.info("delete, userId = {}, itemId = {}", userId, itemId);
-            itemService.deleteItem(userId, itemId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotFoundException e) {
-            log.error("delete, error = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        log.info("delete, userId = {}, itemId = {}", userId, itemId);
+        itemService.deleteItem(userId, itemId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{itemId}/comment")
@@ -130,18 +125,13 @@ class ItemController {
                                         @PathVariable(name = "itemId") long itemId,
                                         @Valid @RequestBody CommentDto commentDto) {
 
-        try {
-            log.info("comment, userId = {}, itemId = {}, comment = {}", userId, itemId, commentDto.toString());
-            Comment comment = CommentMapper.toEntity(commentDto);
-            comment.setItemId(itemId);
-            User author = new User();
-            author.setId(userId);
-            comment.setAuthor(author);
-            comment = commentService.addComment(comment);
-            return new ResponseEntity<>(CommentMapper.toDto(comment), HttpStatus.OK);
-        } catch (ForbiddenException e) {
-            log.error("comment, forbidden = {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        log.info("comment, userId = {}, itemId = {}, comment = {}", userId, itemId, commentDto.toString());
+        Comment comment = CommentMapper.toEntity(commentDto);
+        comment.setItemId(itemId);
+        User author = new User();
+        author.setId(userId);
+        comment.setAuthor(author);
+        comment = commentService.addComment(comment);
+        return new ResponseEntity<>(CommentMapper.toDto(comment), HttpStatus.OK);
     }
 }
