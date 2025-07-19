@@ -63,6 +63,7 @@ class ItemController {
         }
         Item item = toEntity(itemDto);
         item.setUserId(userId);
+        item.setRequestId(itemDto.getRequestId());
         return new ResponseEntity<>(toDto(itemService.addNewItem(item)), HttpStatus.OK);
     }
 
@@ -100,6 +101,10 @@ class ItemController {
                 return new ResponseEntity<>(itemDto, HttpStatus.BAD_REQUEST);
             }
             item.setDescription(itemDto.getDescription());
+        }
+
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
         }
 
         item.setUserId(userId);

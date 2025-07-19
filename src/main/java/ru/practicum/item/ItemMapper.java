@@ -21,7 +21,13 @@ public class ItemMapper {
         }
 
         itemDto.setComments(commentDtos);
+        itemDto.setRequestId(item.getRequestId());
         return itemDto;
+    }
+
+    public static ItemShortDto toShortDto(Item item) {
+        if (item == null) return null;
+        return new ItemShortDto(item.getId(), item.getName());
     }
 
     public static Item toEntity(ItemDto itemDto) {

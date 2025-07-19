@@ -33,6 +33,9 @@ public class Item {
     @JoinColumn(name = "item_id")
     List<Comment> comments;
 
+    @Column(nullable = true, name = "request_id")
+    Long requestId;
+
     @Transient
     Booking lastBooking;
 

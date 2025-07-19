@@ -11,7 +11,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookerId(long bookerId);
     List<Booking> findByBookerIdAndState(long bookerId, State state);
 
-    @Query(value = "SELECT * FROM Bookings b WHERE b.item_id = ?1 and b.endDate < ?2 ORDER BY b.Id desc LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM Bookings b WHERE b.item_id = ?1 and b.end_date < ?2 ORDER BY b.Id desc LIMIT 1", nativeQuery = true)
     Optional<Booking> findByItemIdBefore(long itemId, Instant date);
 
     @Query(value =  "SELECT * FROM Bookings b WHERE b.item_id = ?1 and b.start > ?2 ORDER BY b.Id asc LIMIT 1", nativeQuery = true)

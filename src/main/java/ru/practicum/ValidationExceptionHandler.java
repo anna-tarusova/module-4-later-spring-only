@@ -20,6 +20,7 @@ public class ValidationExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        errors.put("error", "есть ошибки");
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
